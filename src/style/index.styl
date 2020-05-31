@@ -3,6 +3,8 @@ html, body, div, p, ul, li, h1, h2, h3, header, main, footer, nav, section
     margin 0
     padding 0
     box-sizing: border-box
+body 
+    -webkit-tap-highlight-color: rgba(0,0,0,0)
 a  
     text-decoration: none
     color #000000
@@ -24,10 +26,10 @@ html,body, #root
     height 100%
     header 
         width 100%
-        height 1.32rem
+        height 1.28rem
         .home-header 
             width 100%
-            height .88rem
+            height .8rem
             background-color color
             display flex
             justify-content: space-between
@@ -80,8 +82,37 @@ html,body, #root
                         width 100%
                         height 100%
                 p
-                    font-size .14rem
+                    font-size .12rem
+                    padding 0 .04rem
                     display: -webkit-box; /* 弹性盒模型*/
                     -webkit-box-orient: vertical; /* 文字垂直排列 */
                     -webkit-line-clamp:2; /*文字显示的行数*/
                     overflow: hidden; /*超出部分溢出隐藏*/
+    .new-music 
+        width 100%
+        >p
+            border-left .02rem solid color
+            padding-left .1rem
+            margin-bottom: .1rem
+        li 
+            display flex
+            justify-content: space-between
+            padding .08rem .15rem
+            align-items: center
+            .singerName 
+                font-size .12rem
+                color #999
+            i
+                font-size .3rem
+                color #999
+.play-box 
+    width 100%
+    height 100%
+    overflow hidden
+    background-color: #000;
+    .bg-box 
+        width 100%
+        height 100%
+        transform: scale(1.5)
+        opacity: .5
+        

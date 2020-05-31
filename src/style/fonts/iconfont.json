@@ -1,0 +1,51 @@
+{
+  "id": "1849498",
+  "name": "网易云音乐",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "36572",
+      "name": "上一首",
+      "font_class": "shangyishou",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "36574",
+      "name": "下一首",
+      "font_class": "kuaijin",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "1166357",
+      "name": "搜索",
+      "font_class": "fangdajing",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "7069152",
+      "name": "播放",
+      "font_class": "bofang",
+      "unicode": "e737",
+      "unicode_decimal": 59191
+    },
+    {
+      "icon_id": "7629050",
+      "name": "耳机",
+      "font_class": "erji",
+      "unicode": "e6b1",
+      "unicode_decimal": 59057
+    },
+    {
+      "icon_id": "12754056",
+      "name": "暂停",
+      "font_class": "zanting_huaban",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    }
+  ]
+}

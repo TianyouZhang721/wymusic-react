@@ -1,27 +1,16 @@
 import React, { Component } from 'react';
-
+import MusicList from '../../components/MusicList'
 class Recommend extends Component {
 	constructor() {
 		super()
 		this.state = {
 			recommendMusic: [],
-			newMusic: []
+			newMusic: [],
 		}
 		this.getRecommend = this.getRecommend.bind(this)
 		this.getNew = this.getNew.bind(this)
 	}
-	componentWillMount() {
-		// this.$http.get("/personalized?limit=6").then(res => {
-		// 	this.setState({
-		// 		recommendMusic: res.data.result
-		// 	})
-
-		// })
-		// this.$http.get("/personalized/newsong").then(res => {
-		// 	this.setState({
-		// 		newMusic: res.data.result
-		// 	})
-		// })
+	componentDidMount() {
 		this.$http.all([
 			this.getRecommend(),
 			this.getNew()
@@ -34,13 +23,6 @@ class Recommend extends Component {
 			})
 		}))
 
-
-		// this.$http.all([
-		// 	方法1,
-		// 	方法2
-		// ]).then(this.$http.spread((res1, res2) => {
-
-		// }))
 	}
 	getRecommend() {
 		return this.$http.get("/personalized?limit=6")
@@ -48,9 +30,10 @@ class Recommend extends Component {
 	getNew() {
 		return this.$http.get("/personalized/newsong")
 	}
+
 	render() {
 		console.log("render")
-		let { recommendMusic }  = this.state
+		let { recommendMusic, newMusic }  = this.state
 		return (
 			<div className="recommend">
 				<div className="recommend-music">
@@ -68,7 +51,10 @@ class Recommend extends Component {
 						}
 					</ul>
 				</div>
-				<div className="new-music"></div>
+				<div className="new-music">
+					<p>最新音乐</p>
+					<MusicList list={newMusic}></MusicList>
+				</div>
 			</div>
 		);
 	}
