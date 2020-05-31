@@ -4,7 +4,10 @@ class Play extends Component {
     constructor() {
         super()
         this.state = {
-            playStyle: {}
+            playStyle: {}, // 背景图的样式
+            picUrl: "", // 圆圈的图片
+            url: "", // 歌曲地址
+            flag: true, // 控制按钮的显示与隐藏
         }
         this.getDetail = this.getDetail.bind(this)
         this.getUrl = this.getUrl.bind(this)
@@ -38,16 +41,48 @@ class Play extends Component {
                         background: `url(${res1.data.songs[0].al.picUrl}) no-repeat center center`,
                         backgroundSize: "150% 150%",
                         filter: "blur(10px)"
-                    }
+                    },
+                    picUrl: res1.data.songs[0].al.picUrl,
+                    url: res3.data.data[0].url
                 })
             })
         )
     }
+    play() {
+        // 点击播放按钮   元素.paused  返回当前播放器是否暂停
+        if (this.audio.paused) {
+            // 说明是暂停状态
+            this.audio.play()
+            this.setState({
+                flag: false
+            })
+        } else {
+            this.audio.pause()
+            this.setState({
+                flag: true
+            })
+        }
+    }
     render() {
-        let { playStyle } = this.state
+        let { playStyle, picUrl, url, flag } = this.state
         return (
             <div className="play-box">
                 <div className="bg-box"  style={ playStyle }></div>
+                <div className="circle-box">
+                    <div className="circle">
+                        <div className={flag ? "img-box stop" : "img-box"}>
+                            <img src={picUrl} alt=""/>
+                        </div>
+                        
+                    </div>
+                    {/* {
+                        flag && <i className="iconfont icon-bofang" onClick={this.play.bind(this)}></i>
+                    } */}
+                    <i className={flag ? "iconfont icon-bofang" : "iconfont icon-bofang opa"} onClick={this.play.bind(this)}></i>
+                </div>
+                <audio src={url} ref={(audio) => {
+                    this.audio = audio
+                }}></audio>
             </div>
         );
     }
