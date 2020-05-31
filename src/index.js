@@ -4,10 +4,13 @@ import App from './App';
 // 配置路由
 import { BrowserRouter } from 'react-router-dom'
 import axios from 'axios'
+import "./util/fontsize"
+import MapRoute from './routes/MapRoute'
+import routes from './routes/routes'
 Component.prototype.$http = axios
 ReactDOM.render(
     <BrowserRouter>
-      <App />
+        <MapRoute routes={routes} />
     </BrowserRouter>
 ,
   document.getElementById('root')
