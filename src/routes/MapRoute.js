@@ -19,7 +19,10 @@ class MapRoute extends Component {
                             <Route 
                                 key={item.path}
                                 path={item.path}
-                                component={item.component}
+                                // component={item.component}
+                                render={(props) => {
+                                    return <item.component {...props} routes={item.children}></item.component>
+                                }}
                             />
                         ) : (
                             <Redirect key={item.from} to={item.to} />
