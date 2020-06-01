@@ -10,12 +10,16 @@ class Play extends Component {
             flag: true, // 控制按钮的显示与隐藏
             songName: "",
             singerName: "",
-            timeArr: [],
-            lyricArr: []
+            timeArr: [], // 时间数组
+            lyricArr: [], // 歌词数组
+            heightArr: [], //所有li的高度数组
+            ulStyle: {}, // ul的样式
+            ind: 0, // 当前歌词所对应的下标
         }
         this.getDetail = this.getDetail.bind(this)
         this.getUrl = this.getUrl.bind(this)
         this.getLyric = this.getLyric.bind(this)
+        this.computedHeight = this.computedHeight.bind(this)
     }
     getDetail(id) {
         return this.$http.get("/song/detail?ids=" + id)
@@ -47,6 +51,11 @@ class Play extends Component {
                 let timeArr = arr.map(item => {
                     return item.slice(1, 10)
                 })
+                // 把时间都转成以秒为单位
+                timeArr = timeArr.map(item => {
+                    let a = item.split(":")
+                    return parseInt(a[0]) * 60 + parseFloat(a[1])
+                })
                 let lyricArr = arr.map(item => {
                     return item.slice(11)
                 })
@@ -64,6 +73,8 @@ class Play extends Component {
                     singerName: res1.data.songs[0].ar[0].name,
                     timeArr,
                     lyricArr
+                }, () => {
+                    this.computedHeight()
                 })
             })
         )
@@ -83,8 +94,55 @@ class Play extends Component {
             })
         }
     }
+
+    // 当前音乐正在播放，播放进度会更新
+    timeUpdate() {
+        // 获取到当前音乐播放到什么时间了,单位为秒
+        let currentTime = this.audio.currentTime
+        // console.log(currentTime)
+        let {timeArr, heightArr, lyricArr} = this.state
+        let i = timeArr.findIndex((item, index) => {
+            return currentTime > item && currentTime < timeArr[index + 1]
+        })
+        // 最终效果让下标为i的这个歌词漏出来，ul要向上去移动，移动多少？？
+        // 就是这句歌词对应的li之前的所有li的高度之和
+        console.log(i)
+        if (i == -1) i = 0
+        if (!lyricArr[i]) {
+            i -= 1
+        }
+        // 这句歌词前所有li的高度和
+        let sum = 0
+        heightArr.forEach((item, index) => {
+            if (index < i) {
+                sum += item
+            }
+        })
+        console.log(sum)
+        let fs = parseInt(document.documentElement.style.fontSize)
+        console.log(fs)
+        this.setState({
+            ulStyle: {
+                marginTop: -(sum / fs) + 'rem'
+            },
+            ind: i
+        })
+    }
+    // 计算所有li的高度，放到一个数组内
+    computedHeight() {
+        let ul = this.refs.ul
+        let lis = [...ul.children]
+        let arr = []
+        lis.forEach(item => {
+            arr.push(item.clientHeight)
+        })
+        console.log(arr)
+        this.setState({
+            heightArr: arr
+        })
+    }
     render() {
-        let { playStyle, picUrl, url, flag, songName, singerName, lyricArr } = this.state
+        let { playStyle, picUrl, url, flag, songName, singerName, lyricArr, ulStyle, ind } = this.state
         return (
             <div className="play-box">
                 <div className="bg-box"  style={ playStyle }></div>
@@ -105,10 +163,10 @@ class Play extends Component {
                         <span>{singerName}</span>
                     </p>
                     <div className="box">
-                        <ul>
+                        <ul ref="ul" style={ ulStyle }>
                             {
                                 lyricArr.map((item, index) => {
-                                    return <li key={index}>{item}</li>
+                                    return <li className={index == ind ? 'active' : ''} key={index}>{item}</li>
                                 })
                             }
                         </ul>
@@ -116,7 +174,9 @@ class Play extends Component {
                 </div>
                 <audio src={url} ref={(audio) => {
                     this.audio = audio
-                }}></audio>
+                }}
+                    onTimeUpdate={this.timeUpdate.bind(this)}
+                ></audio>
             </div>
         );
     }

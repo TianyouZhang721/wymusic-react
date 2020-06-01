@@ -169,8 +169,13 @@ html,body, #root
             height: .5rem
             overflow: hidden
             margin-top: .2rem
-            li  
-                padding .02rem 0
+            ul 
+                transition all 1s
+                li  
+                    padding .02rem 0
+                    opacity: .5
+                    &.active 
+                        opacity: 1
 
 @keyframes rotate {
     0% {
