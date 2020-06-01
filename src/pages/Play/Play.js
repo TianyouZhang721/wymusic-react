@@ -15,6 +15,8 @@ class Play extends Component {
             heightArr: [], //所有li的高度数组
             ulStyle: {}, // ul的样式
             ind: 0, // 当前歌词所对应的下标
+            duration: 0, // 当前音乐总时长
+            currentTime: 0, // 当前音乐进度
         }
         this.getDetail = this.getDetail.bind(this)
         this.getUrl = this.getUrl.bind(this)
@@ -125,7 +127,8 @@ class Play extends Component {
             ulStyle: {
                 marginTop: -(sum / fs) + 'rem'
             },
-            ind: i
+            ind: i,
+            currentTime: this.timeFormat(currentTime)
         })
     }
     // 计算所有li的高度，放到一个数组内
@@ -141,8 +144,22 @@ class Play extends Component {
             heightArr: arr
         })
     }
+    canPlayThough() {
+        console.log(this.audio.duration)
+        this.setState({
+            duration: this.timeFormat(this.audio.duration)
+        })
+    }
+    timeFormat(time) {
+        // 198 => 03:18
+        let min = Math.floor(time / 60)
+        let sec = time % 60
+        min = min < 10 ? "0" + min : min
+        sec = sec < 10 ? "0" + parseInt(sec) : parseInt(sec)
+        return `${min}:${sec}`
+    }
     render() {
-        let { playStyle, picUrl, url, flag, songName, singerName, lyricArr, ulStyle, ind } = this.state
+        let { playStyle, picUrl, url, flag, songName, singerName, lyricArr, ulStyle, ind, duration, currentTime } = this.state
         return (
             <div className="play-box">
                 <div className="bg-box"  style={ playStyle }></div>
@@ -172,10 +189,19 @@ class Play extends Component {
                         </ul>
                     </div>
                 </div>
+                <div className="progress-box">
+                    <span>{currentTime}</span>
+                    <div className="long-box">
+                        <div className="truth-progress"></div>
+                        <div className="circle"></div>
+                    </div>
+                    <span>{duration}</span>
+                </div>
                 <audio src={url} ref={(audio) => {
                     this.audio = audio
                 }}
                     onTimeUpdate={this.timeUpdate.bind(this)}
+                    onCanPlayThrough={this.canPlayThough.bind(this)}
                 ></audio>
             </div>
         );

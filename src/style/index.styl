@@ -176,6 +176,33 @@ html,body, #root
                     opacity: .5
                     &.active 
                         opacity: 1
+    .progress-box 
+        position absolute
+        top 5.6rem
+        display: flex 
+        color #fff
+        width 100%
+        align-items: center;
+        span 
+            width .6rem
+            text-align: center
+        .long-box 
+            flex 1
+            background-color: #999;
+            height .06rem;
+            position relative
+            .truth-progress
+                width .2rem;
+                height 100%;
+                background-color: #fff
+            .circle 
+                width: 0.12rem
+                height .12rem
+                border-radius: 50%
+                background-color: #fff;
+                position: absolute;
+                left: 0
+                top -.03rem
 
 @keyframes rotate {
     0% {
