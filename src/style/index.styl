@@ -192,7 +192,7 @@ html,body, #root
             height .06rem;
             position relative
             .truth-progress
-                width .2rem;
+                width 0rem;
                 height 100%;
                 background-color: #fff
             .circle 
@@ -204,6 +204,37 @@ html,body, #root
                 left: 0
                 top -.03rem
 
+.hot 
+    width 100%
+    height 100%
+    padding 0 .15rem
+    .musiclist 
+        height 100%
+        overflow: hidden
+    li 
+        display flex
+        padding .08rem 0
+        align-items: center
+        span 
+            width .3rem
+            flex-shrink: 0
+        div 
+            flex 1
+            flex-shrink: 0
+            font-size .14rem
+            overflow: hidden
+            .songName 
+                width 100%
+                text-overflow: ellipsis
+                overflow: hidden
+                white-space: nowrap
+            .singerName 
+                font-size .12rem
+                color #999
+        i
+            width .3rem
+            font-size: .3rem
+            flex-shrink: 0
 @keyframes rotate {
     0% {
         transform: rotate(0deg)

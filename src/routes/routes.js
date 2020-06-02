@@ -16,11 +16,16 @@ const routes = [
             },
             {
                 path: "/home/hot",
-                component: Hot
+                component: Hot,
+                auth: true
             },
             {
                 path: "/home/search",
                 component: Search
+            },
+            {
+                from: "/home",
+                to: "/home/recommend"
             }
         ]
     },

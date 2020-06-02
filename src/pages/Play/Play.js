@@ -17,6 +17,7 @@ class Play extends Component {
             ind: 0, // 当前歌词所对应的下标
             duration: 0, // 当前音乐总时长
             currentTime: 0, // 当前音乐进度
+            width: 0,
         }
         this.getDetail = this.getDetail.bind(this)
         this.getUrl = this.getUrl.bind(this)
@@ -33,7 +34,6 @@ class Play extends Component {
         return this.$http.get("/song/url?id=" + id)
     }
     componentDidMount() {
-        console.log(this)
         let str = this.props.location.search.slice(1)
         let id = qs.parse(str).id
         // 一进入播放页面，我们需要同时调用3个接口
@@ -43,12 +43,9 @@ class Play extends Component {
             this.getUrl(id)
         ]).then(
             this.$http.spread((res1, res2, res3) => {
-                console.log(res1)
-                console.log(res2.data.lrc.lyric)
-                console.log(res3)
+  
                 var lyric = res2.data.lrc.lyric// 歌词字符串
                 var arr = lyric.split(/\n/)
-                console.log(arr)
                 // 分出两个数组，一个存时间，一个存歌词
                 let timeArr = arr.map(item => {
                     return item.slice(1, 10)
@@ -61,8 +58,6 @@ class Play extends Component {
                 let lyricArr = arr.map(item => {
                     return item.slice(11)
                 })
-                console.log(timeArr)
-                console.log(lyricArr)
                 this.setState({
                     playStyle: {
                         background: `url(${res1.data.songs[0].al.picUrl}) no-repeat center center`,
@@ -101,14 +96,12 @@ class Play extends Component {
     timeUpdate() {
         // 获取到当前音乐播放到什么时间了,单位为秒
         let currentTime = this.audio.currentTime
-        // console.log(currentTime)
         let {timeArr, heightArr, lyricArr} = this.state
         let i = timeArr.findIndex((item, index) => {
             return currentTime > item && currentTime < timeArr[index + 1]
         })
         // 最终效果让下标为i的这个歌词漏出来，ul要向上去移动，移动多少？？
         // 就是这句歌词对应的li之前的所有li的高度之和
-        console.log(i)
         if (i == -1) i = 0
         if (!lyricArr[i]) {
             i -= 1
@@ -120,15 +113,20 @@ class Play extends Component {
                 sum += item
             }
         })
-        console.log(sum)
         let fs = parseInt(document.documentElement.style.fontSize)
-        console.log(fs)
+
+        // 计算真实进度条宽度
+        // 当前音乐进度    =   进度条宽度
+        // 当前音乐总时长  =    进度条总宽度
+        let width = this.audio.currentTime / this.audio.duration * this.refs.progress.clientWidth
+        console.log(width)
         this.setState({
             ulStyle: {
                 marginTop: -(sum / fs) + 'rem'
             },
             ind: i,
-            currentTime: this.timeFormat(currentTime)
+            currentTime: this.timeFormat(currentTime),
+            width: width / fs + 'rem'
         })
     }
     // 计算所有li的高度，放到一个数组内
@@ -139,13 +137,11 @@ class Play extends Component {
         lis.forEach(item => {
             arr.push(item.clientHeight)
         })
-        console.log(arr)
         this.setState({
             heightArr: arr
         })
     }
     canPlayThough() {
-        console.log(this.audio.duration)
         this.setState({
             duration: this.timeFormat(this.audio.duration)
         })
@@ -158,8 +154,41 @@ class Play extends Component {
         sec = sec < 10 ? "0" + parseInt(sec) : parseInt(sec)
         return `${min}:${sec}`
     }
+    clickProgress(e) {
+        let fs = parseInt(document.documentElement.style.fontSize)
+        console.log(e.clientX)
+        let x = e.clientX - this.refs.span.clientWidth
+        console.log(x)
+        this.setState({
+            width: x / fs + 'rem'
+        })
+        // 2. 让音乐跳到对应位置
+        // 当前音乐进度    =   进度条宽度
+        // 当前音乐总时长  =    进度条总宽度
+        this.audio.currentTime = x / this.refs.progress.clientWidth * this.audio.duration
+    }
+    move(e) {
+        this.audio.pause()
+        let fs = parseInt(document.documentElement.style.fontSize)
+
+        // 1. 让球 和 进度条宽度跟着手指移动 改width
+        // 手指在当前页面的横坐标 单位为px
+        let x = e.touches[0].clientX - this.refs.span.clientWidth
+        console.log(x)
+        this.setState({
+            width: x / fs + 'rem'
+        })
+        // 2. 让音乐跳到对应位置
+        // 当前音乐进度    =   进度条宽度
+        // 当前音乐总时长  =    进度条总宽度
+        this.audio.currentTime = x / this.refs.progress.clientWidth * this.audio.duration
+        // 3. 歌词也跳到对应的位置
+    }
+    end() {
+        this.play()
+    }
     render() {
-        let { playStyle, picUrl, url, flag, songName, singerName, lyricArr, ulStyle, ind, duration, currentTime } = this.state
+        let { playStyle, picUrl, url, flag, songName, singerName, lyricArr, ulStyle, ind, duration, currentTime, width } = this.state
         return (
             <div className="play-box">
                 <div className="bg-box"  style={ playStyle }></div>
@@ -189,14 +218,20 @@ class Play extends Component {
                         </ul>
                     </div>
                 </div>
-                <div className="progress-box">
-                    <span>{currentTime}</span>
+                <div className="progress-box" ref="progress">
+                    <span ref="span">{currentTime}</span>
                     <div className="long-box">
-                        <div className="truth-progress"></div>
-                        <div className="circle"></div>
+                        <div className="truth-progress" style={ {width: width} } onClick={this.clickProgress.bind(this)}></div>
+                        <div 
+                        className="circle" 
+                        style={{left: width}}
+                        onTouchMove={this.move.bind(this)}
+                        onTouchEnd={this.end.bind(this)}
+                        ></div>
                     </div>
                     <span>{duration}</span>
                 </div>
+                {/* 当前音乐播放进度 / 当前音乐总时长 = 真实进度条宽度 / 进度条总宽度 */}
                 <audio src={url} ref={(audio) => {
                     this.audio = audio
                 }}

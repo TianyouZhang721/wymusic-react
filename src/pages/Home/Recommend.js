@@ -15,8 +15,6 @@ class Recommend extends Component {
 			this.getRecommend(),
 			this.getNew()
 		]).then(this.$http.spread((res1, res2) => {
-			console.log(res1)
-			console.log(res2)
 			this.setState({
 				recommendMusic: res1.data.result,
 				newMusic: res2.data.result
@@ -32,7 +30,6 @@ class Recommend extends Component {
 	}
 
 	render() {
-		console.log("render")
 		let { recommendMusic, newMusic }  = this.state
 		return (
 			<div className="recommend">
@@ -53,7 +50,7 @@ class Recommend extends Component {
 				</div>
 				<div className="new-music">
 					<p>最新音乐</p>
-					<MusicList list={newMusic}></MusicList>
+					<MusicList need={false} list={newMusic}></MusicList>
 				</div>
 			</div>
 		);

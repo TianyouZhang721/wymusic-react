@@ -21,7 +21,15 @@ class MapRoute extends Component {
                                 path={item.path}
                                 // component={item.component}
                                 render={(props) => {
-                                    return <item.component {...props} routes={item.children}></item.component>
+                                    return item.auth ? (
+                                        sessionStorage.getItem("id") ? (
+                                            <item.component {...props} routes={item.children}></item.component>
+                                        ) : (
+                                            <Redirect key={item.from} to="/login" />
+                                        )
+                                    ) : (
+                                        <item.component {...props} routes={item.children}></item.component>
+                                    )
                                 }}
                             />
                         ) : (
