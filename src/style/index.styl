@@ -211,30 +211,44 @@ html,body, #root
     .musiclist 
         height 100%
         overflow: hidden
-    li 
-        display flex
-        padding .08rem 0
-        align-items: center
-        span 
-            width .3rem
-            flex-shrink: 0
-        div 
-            flex 1
-            flex-shrink: 0
-            font-size .14rem
-            overflow: hidden
-            .songName 
-                width 100%
-                text-overflow: ellipsis
+        .pullDown 
+            position: absolute
+            height .5rem
+            top -.5rem
+            width 100%
+            left 0 
+            text-align: center
+        .pullUp 
+            position: absolute
+            height .5rem
+            bottom -.5rem
+            width 100%
+            left 0 
+            text-align: center
+        li 
+            display flex
+            padding .08rem 0
+            align-items: center
+            span 
+                width .3rem
+                flex-shrink: 0
+            div 
+                flex 1
+                flex-shrink: 0
+                font-size .14rem
                 overflow: hidden
-                white-space: nowrap
-            .singerName 
-                font-size .12rem
-                color #999
-        i
-            width .3rem
-            font-size: .3rem
-            flex-shrink: 0
+                .songName 
+                    width 100%
+                    text-overflow: ellipsis
+                    overflow: hidden
+                    white-space: nowrap
+                .singerName 
+                    font-size .12rem
+                    color #999
+            i
+                width .3rem
+                font-size: .3rem
+                flex-shrink: 0
 @keyframes rotate {
     0% {
         transform: rotate(0deg)

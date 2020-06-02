@@ -8,6 +8,9 @@ class Hot extends Component {
 		}
 	}
 	componentDidMount() {
+		this.getData()
+	}
+	getData() {
 		this.$http.get("/top/list?idx=1").then(res => {
 			console.log(res)
 			this.setState({
@@ -18,7 +21,7 @@ class Hot extends Component {
 	render() {
 		return (
 			<div className="hot">
-				<MusicList need={true} list={this.state.hotList}/>
+				<MusicList getData={this.getData.bind(this)} need={true} list={this.state.hotList}/>
 			</div>
 		);
 	}
