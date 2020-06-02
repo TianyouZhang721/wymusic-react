@@ -17,62 +17,58 @@ class MusicList extends Component {
         }
         this.renderList = this.renderList.bind(this)
     }
-    // componentWillReceiveProps(nextProps) {
-    //     console.log(nextProps)
-    //     if (nextProps.list.length > 10) {
-    //         this.setState({
-    //             flag: true
-    //         })
-    //     } else {
-    //         this.setState({
-    //             flag: false
-    //         })
-    //     }
-    // }
-    componentDidMount() {
-        let bs = new BScroll(".musiclist", {
-            probeType: 2,
-            click: true
-        })
-        let that = this
-        bs.on("scroll", function(){
-            if (this.y > that.refs.down.clientHeight) {
-                console.log("下拉刷新完全漏出来了")
-                that.setState({
-                    downFlag: true
-                })
-            } else {
-                that.setState({
-                    downFlag: false
-                })
-            }
-            if (this.y < this.maxScrollY - that.refs.down.clientHeight) {
-                that.setState({
-                    upFlag: true
-                })
-            } else {
-                that.setState({
-                    upFlag: false
-                })
-            }
-
-        })
-        bs.on("scrollEnd", function() {
-            if (that.state.downFlag) {
-                that.props.getData()
-            }
-            if (that.state.upFlag) {
-                let end  = that.state.end
-                end+=30
-                end = end > that.props.list.length ? that.props.list.length : end
-                that.setState({
-                    end
-                }, () => {
-                    
-                })
-            }
-        })
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps)
+        if (nextProps.list.length > 50) {
+            let bs = new BScroll(".musiclist", {
+                probeType: 2,
+                click: true
+            })
+            let that = this
+            bs.on("scroll", function(){
+                if (this.y > that.refs.down.clientHeight) {
+                    console.log("下拉刷新完全漏出来了")
+                    that.setState({
+                        downFlag: true
+                    })
+                } else {
+                    that.setState({
+                        downFlag: false
+                    })
+                }
+                if (this.y < this.maxScrollY - that.refs.down.clientHeight) {
+                    that.setState({
+                        upFlag: true
+                    })
+                } else {
+                    that.setState({
+                        upFlag: false
+                    })
+                }
+    
+            })
+            bs.on("scrollEnd", function() {
+                if (that.state.downFlag) {
+                    that.props.getData()
+                }
+                if (that.state.upFlag) {
+                    let end  = that.state.end
+                    end+=30
+                    end = end > that.props.list.length ? that.props.list.length : end
+                    that.setState({
+                        end
+                    }, () => {
+                        
+                    })
+                }
+            })
+        } else {
+            this.setState({
+                flag: false
+            })
+        }
     }
+
     goPlay(id) {
         this.props.history.push("/play?id=" + id)
     }
@@ -82,7 +78,18 @@ class MusicList extends Component {
                 { this.props.need && <span>{index + 1}</span> }
                 <div>
                     <p className="songName">{item.name}</p>
-                    <p className="singerName">{item.song ? item.song.artists[0].name : item.ar[0].name} - {item.name}</p>
+
+                    {
+                        (() => {
+                            if(item.song) {
+                                return  <p className="singerName">{item.song.artists[0].name} - {item.name}</p>
+                            } else if(item.ar) {
+                               return <p className="singerName">{item.ar[0].name} - {item.name}</p>
+                            } else {
+                              return  <p className="singerName">{item.artists[0].name} - {item.name}</p>
+                            }
+                        })()
+                    }
                 </div>
                 <i className="iconfont icon-bofang"></i>
             </li>
@@ -94,7 +101,8 @@ class MusicList extends Component {
         return (
             <div className="musiclist">
                 <ul ref="ul">
-                    <p className="pullDown" ref="down">{downFlag ? '释放刷新' : '下拉刷新'}</p>
+                    {this.props.list.length > 50 && <p className="pullDown" ref="down">{downFlag ? '释放刷新' : '下拉刷新'}</p>}
+                    
                     {
                         el
                         // list.map((item, index) => {
@@ -109,7 +117,7 @@ class MusicList extends Component {
                         // })
                     }
                     {
-                        end >= this.props.list.length ? <p className="pullUp">到底了！！</p> :<p className="pullUp">{upFlag ? "释放加载" : "上拉加载"}</p>
+                        this.props.list.length > 50 && (end >= this.props.list.length ? <p className="pullUp">到底了！！</p> :<p className="pullUp">{upFlag ? "释放加载" : "上拉加载"}</p>)
                     }
                 </ul>
             </div>
